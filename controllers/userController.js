@@ -1,8 +1,8 @@
-// controllers/userController.js
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const cloudinary = require('../config/cloudinary');
 
 // @desc    Get all users
 // @route   GET /api/users
@@ -28,13 +28,20 @@ const createUser = asyncHandler(async (req, res) => {
   const salt = await bcrypt.genSalt(10);
   const hashedPassword = await bcrypt.hash(password, salt);
 
+  let uploadedImage;
+  if (profilePicture) {
+    uploadedImage = await cloudinary.uploader.upload(profilePicture, {
+      folder: 'profile_pictures',
+    });
+  }
+
   const user = new User({
     name,
     email,
     password: hashedPassword,
     address,
     phone,
-    profilePicture,
+    profilePicture: uploadedImage ? uploadedImage.secure_url : '',
   });
 
   const createdUser = await user.save();
