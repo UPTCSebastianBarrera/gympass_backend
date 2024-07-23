@@ -4,16 +4,16 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 
-dotenv.config();
+dotenv.config(); // Ensure environment variables are loaded
 
-connectDB();
+connectDB(); // Connect to MongoDB
 
 const app = express();
 
 app.use(cors());
 app.use(express.json()); // To accept JSON data
 
-app.use('/api/users', userRoutes);
+app.use('/api/users', userRoutes); // User routes
 
 const PORT = process.env.PORT || 5000;
 
