@@ -1,8 +1,17 @@
+// backend/models/Gym.js
 const mongoose = require("mongoose");
 
-const supplementSchema = mongoose.Schema(
+const gymSchema = mongoose.Schema(
   {
     name: {
+      type: String,
+      required: true,
+    },
+    schedule: {
+      type: String,
+      required: true,
+    },
+    address: {
       type: String,
       required: true,
     },
@@ -14,12 +23,12 @@ const supplementSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    tags: {
+    plans: {
       type: [String],
       required: true,
     },
-    image: {
-      type: String,
+    tags: {
+      type: [String],
       required: true,
     },
   },
@@ -28,6 +37,6 @@ const supplementSchema = mongoose.Schema(
   }
 );
 
-const Supplement = mongoose.model("Supplement", supplementSchema);
+const Gym = mongoose.model("gyms", gymSchema);
 
-module.exports = Supplement;
+module.exports = Gym;
