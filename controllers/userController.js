@@ -5,6 +5,16 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cloudinary = require('../config/cloudinary');
 
+const validatePassword = (password) => {
+  const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/;
+  return regex.test(password);
+};
+
+const validateEmail = (email) => {
+  const regex = /^[a-zA-Z0-9._%+-]+@(gmail\.com|uptc\.edu\.co)$/;
+  return regex.test(email);
+};
+
 // @desc    Get all users
 // @route   GET /api/users
 // @access  Public
@@ -19,11 +29,21 @@ const getUsers = asyncHandler(async (req, res) => {
 const createUser = asyncHandler(async (req, res) => {
   const { name, email, password, address, phone, profilePicture } = req.body;
 
+  if (!validateEmail(email)) {
+    res.status(400);
+    throw new Error('Email invalido');
+  }
+
+  if (!validatePassword(password)) {
+    res.status(400);
+    throw new Error('Contraseña no cumple con los requisitos de complejidad');
+  }
+
   const userExists = await User.findOne({ email });
 
   if (userExists) {
     res.status(400);
-    throw new Error('User already exists');
+    throw new Error('Usuario ya existe');
   }
 
   const salt = await bcrypt.genSalt(10);
@@ -76,7 +96,7 @@ const authUser = asyncHandler(async (req, res) => {
     });
   } else {
     res.status(401);
-    throw new Error('Invalid email/name or password');
+    throw new Error('Usuario o contraseñas incorrectos');
   }
 });
 
