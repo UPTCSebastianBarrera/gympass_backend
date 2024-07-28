@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const { getGyms } = require('../controllers/gymController');
+const { getGyms, createGym, updateGym, deleteGym } = require('../controllers/gymController');
 
-router.get('/', getGyms);
+router.route('/').get(getGyms).post(createGym);
+router.route('/:id').put(updateGym).delete(deleteGym);
 
 module.exports = router;

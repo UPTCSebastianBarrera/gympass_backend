@@ -19,7 +19,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 
 app.use('/api/users', userRoutes);
 app.use('/api/supplements', supplementRoutes);
-app.use('/api/gyms', gymRoutes); 
+app.use('/api/gyms', gymRoutes);
 
 const PORT = process.env.PORT || 5000;
 
