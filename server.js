@@ -5,7 +5,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const supplementRoutes = require('./routes/supplementRoutes');
-const gymRoutes = require('./routes/gymRoutes'); // Asegúrate de que el nombre del archivo es gymRoutes.js
+const gymRoutes = require('./routes/gymRoutes'); 
 
 dotenv.config();
 
