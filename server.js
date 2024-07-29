@@ -5,7 +5,8 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const userRoutes = require('./routes/userRoutes');
 const supplementRoutes = require('./routes/supplementRoutes');
-const gymRoutes = require('./routes/gymRoutes'); 
+const gymRoutes = require('./routes/gymRoutes');
+const adminRoutes = require('./routes/adminRoutes');
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use('/api/users', userRoutes);
 app.use('/api/supplements', supplementRoutes);
 app.use('/api/gyms', gymRoutes);
+app.use('/api/admin', adminRoutes);
 
 const PORT = process.env.PORT || 5000;
 
