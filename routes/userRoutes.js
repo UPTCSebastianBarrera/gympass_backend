@@ -12,5 +12,5 @@ router.route('/').get(getUsers).post(createUser);
 router.post('/login', authUser);
 router.post('/recover', recoverPassword);
 router.post('/reset-password/:token', resetPassword); // Add this route
-//testeo nuevo xd
+
 module.exports = router;
