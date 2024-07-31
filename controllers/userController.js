@@ -1,9 +1,14 @@
-// controllers/userController.js
+const crypto = require('crypto');
 const asyncHandler = require('express-async-handler');
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cloudinary = require('../config/cloudinary');
+const mailgun = require('mailgun-js');
+
+const mg = mailgun({ apiKey: '75c0453968819c9a7d22a01e66023a26-afce6020-e04787bf', domain: 'sandbox0473816090b7474fa18dd5dca2ccf06d.mailgun.org' });
+
+const resetTokens = new Map(); // Store reset tokens temporarily in memory
 
 const validatePassword = (password) => {
   const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,32}$/;
@@ -107,8 +112,78 @@ const generateToken = (id) => {
   });
 };
 
+// @desc    Recover password
+// @route   POST /api/users/recover
+// @access  Public
+// const recoverPassword = asyncHandler(async (req, res) => {
+//   const { email } = req.body;
+//   const user = await User.findOne({ email });
+
+//   if (!user) {
+//     res.status(404);
+//     throw new Error('User not found');
+//   }
+
+//   const resetToken = crypto.randomBytes(32).toString('hex');
+//   const resetURL = `http://localhost:3000/reset-password/${resetToken}`;
+
+//   // Store the token in memory with an expiration time
+//   resetTokens.set(resetToken, { email, expires: Date.now() + 3600000 }); // Token valid for 1 hour
+
+//   const data = {
+//     from: 'Your App <no-reply@yourdomain.com>',
+//     to: user.email,
+//     subject: 'Password Recovery',
+//     text: `You requested a password reset. Please click the link to reset your password: ${resetURL}`
+//   };
+
+//   mg.messages().send(data, (error, body) => {
+//     if (error) {
+//       console.error(error);
+//       res.status(500).send('Error sending email');
+//     } else {
+//       res.status(200).send('Email sent');
+//     }
+//   });
+// });
+
+// @desc    Reset password
+// @route   POST /api/users/reset-password/:token
+// @access  Public
+const resetPassword = asyncHandler(async (req, res) => {
+  const { token } = req.params;
+  const { password } = req.body;
+
+  const resetData = resetTokens.get(token);
+
+  if (!resetData || resetData.expires < Date.now()) {
+    res.status(400);
+    throw new Error('Invalid or expired token');
+  }
+
+  const user = await User.findOne({ email: resetData.email });
+
+  if (!user) {
+    res.status(400);
+    throw new Error('User not found');
+  }
+
+  const salt = await bcrypt.genSalt(10);
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  user.password = hashedPassword;
+  await user.save();
+
+  // Remove the token from memory
+  resetTokens.delete(token);
+
+  res.status(200).send('Password has been reset');
+});
+
 module.exports = {
   getUsers,
   createUser,
   authUser,
+  recoverPassword,
+  resetPassword, // Export the new function
 };

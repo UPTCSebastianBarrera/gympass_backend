@@ -1,10 +1,17 @@
 // routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
-const { getUsers, createUser, authUser } = require('../controllers/userController');
+const {
+  getUsers,
+  createUser,
+  authUser,
+  recoverPassword,
+  resetPassword // Import the new function
+} = require('../controllers/userController');
 
 router.route('/').get(getUsers).post(createUser);
-router.route('/login').post(authUser);
+router.post('/login', authUser);
+router.post('/recover', recoverPassword);
+router.post('/reset-password/:token', resetPassword); // Add this route
 
 module.exports = router;
-
