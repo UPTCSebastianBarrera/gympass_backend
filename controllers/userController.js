@@ -125,7 +125,7 @@ const recoverPassword = asyncHandler(async (req, res) => {
   }
 
   const resetToken = crypto.randomBytes(32).toString('hex');
-  const resetURL = `https://gympass-backend.vercel.app/reset-password/${resetToken}`;
+  const resetURL = `https://gympass.netlify.app/reset-password/${resetToken}`;
 
   // Store the token in memory with an expiration time
   resetTokens.set(resetToken, { email, expires: Date.now() + 3600000 }); // Token valid for 1 hour
