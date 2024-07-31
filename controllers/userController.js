@@ -115,37 +115,37 @@ const generateToken = (id) => {
 // @desc    Recover password
 // @route   POST /api/users/recover
 // @access  Public
-const recoverPassword = asyncHandler(async (req, res) => {
-  const { email } = req.body;
-  const user = await User.findOne({ email });
+// const recoverPassword = asyncHandler(async (req, res) => {
+//   const { email } = req.body;
+//   const user = await User.findOne({ email });
 
-  if (!user) {
-    res.status(404);
-    throw new Error('User not found');
-  }
+//   if (!user) {
+//     res.status(404);
+//     throw new Error('User not found');
+//   }
 
-  const resetToken = crypto.randomBytes(32).toString('hex');
-  const resetURL = `http://localhost:3000/reset-password/${resetToken}`;
+//   const resetToken = crypto.randomBytes(32).toString('hex');
+//   const resetURL = `http://localhost:3000/reset-password/${resetToken}`;
 
-  // Store the token in memory with an expiration time
-  resetTokens.set(resetToken, { email, expires: Date.now() + 3600000 }); // Token valid for 1 hour
+//   // Store the token in memory with an expiration time
+//   resetTokens.set(resetToken, { email, expires: Date.now() + 3600000 }); // Token valid for 1 hour
 
-  const data = {
-    from: 'Your App <no-reply@yourdomain.com>',
-    to: user.email,
-    subject: 'Password Recovery',
-    text: `You requested a password reset. Please click the link to reset your password: ${resetURL}`
-  };
+//   const data = {
+//     from: 'Your App <no-reply@yourdomain.com>',
+//     to: user.email,
+//     subject: 'Password Recovery',
+//     text: `You requested a password reset. Please click the link to reset your password: ${resetURL}`
+//   };
 
-  mg.messages().send(data, (error, body) => {
-    if (error) {
-      console.error(error);
-      res.status(500).send('Error sending email');
-    } else {
-      res.status(200).send('Email sent');
-    }
-  });
-});
+//   mg.messages().send(data, (error, body) => {
+//     if (error) {
+//       console.error(error);
+//       res.status(500).send('Error sending email');
+//     } else {
+//       res.status(200).send('Email sent');
+//     }
+//   });
+// });
 
 // @desc    Reset password
 // @route   POST /api/users/reset-password/:token
@@ -184,6 +184,5 @@ module.exports = {
   getUsers,
   createUser,
   authUser,
-  recoverPassword,
   resetPassword, // Export the new function
 };
